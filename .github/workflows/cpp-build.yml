@@ -1,0 +1,30 @@
+name: cpp-build
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  arm-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup arm-none-eabi-gcc
+        uses: fiam/arm-none-eabi-gcc@v1
+        with:
+          release: '9-2019-q4'
+      - name: checkout branch
+        uses: actions/checkout@master
+      - name: cmake build
+        run: |
+          ./build.sh
+  format-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check clang-format version
+        run: |
+          clang-format --version
+      - name: checkout branch
+        uses: actions/checkout@master
+      - name: clang-check
+        run: |
+          ./scripts/formatter.sh core drivers

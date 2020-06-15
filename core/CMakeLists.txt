@@ -1,5 +1,6 @@
 set(SRCS_CORE
     src/sys.c
+    src/uart_interface.cpp
     src/stm32f1xx_hal_msp.c
     src/system_stm32f1xx.c
     src/main.cpp

@@ -14,10 +14,19 @@
  *
  *****************************************************************************/
 #include "main.hpp"
+#include "uart_interface.hpp"
 
 #include <memory.h>
 
 static void SystemClock_Config(void);
+
+/* global variables */
+UartInterface *uart_console;
+void cb(uint16_t* data, size_t size, uint32_t status){
+    (void)(data);
+    (void)(size);
+    (void)(status);
+}
 
 /**
  * @brief  The application entry point.
@@ -41,7 +50,12 @@ int main(void)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
+    /* uartの初期化 */
+    uart_console = new UartInterface(USART2, 9600, 10, 0);
+    uart_console->init(cb);
+
     while (1) {
+        uart_console->transmit("coco");
         GPIOC->ODR ^= 1 << 13;
         HAL_Delay(500);
     }

@@ -14,4 +14,4 @@ set(SRCS_HAL
     STM32F1xx_HAL_Driver/src/stm32f1xx_hal_exti.c
 )
 
-add_library(hal STATIC ${SRCS_HAL})
+add_library(hal ${SRCS_HAL})

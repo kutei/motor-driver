@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 function get_full_path(){
-    DIR=$(dirname $1)
-    PREFIX=$(cd ${DIR} && pwd)
-    echo "${PREFIX}/`basename $1`"
+    if [[ -d $1 ]]; then
+        echo "$(cd $1 && pwd)"
+    else
+        echo "$(cd `dirname $1` && pwd)/`basename $1`"
+    fi
 }
 
 function main(){
@@ -18,9 +20,9 @@ function main(){
         mkdir ${INSTALL_DIR}
     fi
 
-    SRC_PREFIX=$(cd ${SRC_DIR} && pwd)
-    BUILD_PREFIX=$(cd ${BUILD_DIR} && pwd)
-    INSTALL_PREFIX=$(cd ${INSTALL_DIR} && pwd)
+    SRC_PREFIX=$(get_full_path ${SRC_DIR})
+    BUILD_PREFIX=$(get_full_path ${BUILD_DIR})
+    INSTALL_PREFIX=$(get_full_path ${INSTALL_DIR})
     TOOLCHAIN_PATH=$(get_full_path ${TOOLCHAIN})
 
     echo "======================================"

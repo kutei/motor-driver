@@ -3,7 +3,8 @@ set(SRCS_CORE
     src/uart_interface.cpp
     src/stm32f1xx_hal_msp.c
     src/system_stm32f1xx.c
-    src/main.cpp
+    src/main.c
+    src/usr_main.cpp
 )
 add_library(core STATIC ${SRCS_CORE})
 

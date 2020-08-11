@@ -9,6 +9,20 @@
 #define UART_INTERFACE_H_
 
 #include "stm32f1xx.h"
+
+class TestClass {
+public:
+    int init(USART_TypeDef* instance, uint32_t baud, uint32_t priority,
+            uint32_t byte_length, uint32_t stop_bits, uint32_t parity, uint8_t remap_gpio);
+    int init(USART_TypeDef* instance, uint32_t baud, uint32_t priority, uint8_t remap_gpio);
+private:
+    int _baud;
+    uint32_t _remap;
+    uint32_t _nvic_priority;
+    IRQn_Type _usart_irq;
+    UART_HandleTypeDef _huart;
+};
+
 class UartInterface {
 public:
     typedef void (*uart_callback_t)(uint16_t*, size_t, uint32_t);
@@ -20,9 +34,9 @@ public:
      * @param[in] baud ボーレート
      * @param[in] priority 割り込みのプライオリティ
      * @param[in] remap_gpio remap設定
-     * @retval None
+     * @retval 0 成功
      */
-    UartInterface(USART_TypeDef* instance, uint32_t baud, uint32_t priority, uint8_t remap_gpio);
+    int init(USART_TypeDef* instance, uint32_t baud, uint32_t priority, uint8_t remap_gpio);
 
     /**
      * @brief uartペリフェラルを通信用として通信用として初期化起動する。
@@ -34,9 +48,9 @@ public:
      * @param[in] stop_bits stopビット長
      * @param[in] parity parityビットの設定
      * @param[in] remap_gpio remap設定
-     * @retval None
+     * @retval 0 成功
      */
-    UartInterface(USART_TypeDef* instance, uint32_t baud, uint32_t priority,
+    int init(USART_TypeDef* instance, uint32_t baud, uint32_t priority,
             uint32_t byte_length, uint32_t stop_bits, uint32_t parity, uint8_t remap_gpio);
 
     /**
@@ -45,7 +59,7 @@ public:
      * @param[in] cb_function データを受信した際のcallback関数
      * @retval None
      */
-    void init(uart_callback_t cb_function);
+    void start(uart_callback_t cb_function);
 
     /**
      * @brief 割り込み要求ハンドラを処理する。

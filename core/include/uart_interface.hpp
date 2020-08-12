@@ -10,9 +10,10 @@
 
 #include "stm32f1xx.h"
 
-class UartInterface {
+class UartInterface
+{
 public:
-    typedef void (*uart_callback_t)(uint16_t*, size_t, uint32_t);
+    typedef void (*uart_callback_t)(uint16_t *, size_t, uint32_t);
 
     /**
      * @brief uartペリフェラルを通信用として通信用として初期化起動する。(8bit,no-parity,1stop)
@@ -23,7 +24,7 @@ public:
      * @param[in] remap_gpio remap設定
      * @retval None
      */
-    void init(USART_TypeDef* instance, uint32_t baud, uint32_t priority, uint8_t remap_gpio);
+    void init(USART_TypeDef *instance, uint32_t baud, uint32_t priority, uint8_t remap_gpio);
 
     /**
      * @brief uartペリフェラルを通信用として通信用として初期化起動する。
@@ -37,8 +38,8 @@ public:
      * @param[in] remap_gpio remap設定
      * @retval None
      */
-    void init(USART_TypeDef* instance, uint32_t baud, uint32_t priority,
-            uint32_t byte_length, uint32_t stop_bits, uint32_t parity, uint8_t remap_gpio);
+    void init(USART_TypeDef *instance, uint32_t baud, uint32_t priority, uint32_t byte_length, uint32_t stop_bits, uint32_t parity,
+              uint8_t remap_gpio);
 
     /**
      * @brief GPIOの設定を行い、割り込みを有効化して、通信を開始する。
@@ -98,10 +99,10 @@ public:
 
 private:
     UART_HandleTypeDef huart;
-    IRQn_Type usart_irq;
-    uart_callback_t cb;
-    uint32_t remap;
-    uint32_t nvic_priority;
+    IRQn_Type          usart_irq;
+    uart_callback_t    cb;
+    uint32_t           remap;
+    uint32_t           nvic_priority;
     /**
      * @brief USART_DRから1Byte(8,9bits)のデータを取得する。
      *
@@ -111,28 +112,20 @@ private:
     uint16_t receive(void);
 };
 
-inline uint16_t UartInterface::receive(void){
+inline uint16_t UartInterface::receive(void)
+{
     uint16_t formated_data = 0;
 
-    if(huart.Init.WordLength == UART_WORDLENGTH_9B)
-    {
-        if(huart.Init.Parity == UART_PARITY_NONE)
-        {
+    if (huart.Init.WordLength == UART_WORDLENGTH_9B) {
+        if (huart.Init.Parity == UART_PARITY_NONE) {
             formated_data = (uint16_t)(huart.Instance->DR & (uint32_t)0x01FF);
-        }
-        else
-        {
+        } else {
             formated_data = (uint16_t)(huart.Instance->DR & (uint32_t)0x00FF);
         }
-    }
-    else
-    {
-        if(huart.Init.Parity == UART_PARITY_NONE)
-        {
+    } else {
+        if (huart.Init.Parity == UART_PARITY_NONE) {
             formated_data = (uint16_t)(huart.Instance->DR & (uint32_t)0x00FF);
-        }
-        else
-        {
+        } else {
             formated_data = (uint16_t)(huart.Instance->DR & (uint32_t)0x007F);
         }
     }
@@ -140,7 +133,8 @@ inline uint16_t UartInterface::receive(void){
     return formated_data;
 }
 
-inline void UartInterface::handle_irq(void){
+inline void UartInterface::handle_irq(void)
+{
     uint32_t isrflags   = READ_REG(huart.Instance->SR);
     uint32_t cr1its     = READ_REG(huart.Instance->CR1);
     uint32_t errorflags = 0x00U;
@@ -149,14 +143,12 @@ inline void UartInterface::handle_irq(void){
     errorflags = (isrflags & (uint32_t)(USART_SR_PE | USART_SR_FE | USART_SR_ORE | USART_SR_NE));
 
     /* UART received data is enabled */
-    if(((isrflags & USART_SR_RXNE) != RESET) && ((cr1its & USART_CR1_RXNEIE) != RESET))
-    {
+    if (((isrflags & USART_SR_RXNE) != RESET) && ((cr1its & USART_CR1_RXNEIE) != RESET)) {
         uint16_t rx_data = receive();
         cb(&rx_data, 1, errorflags);
     }
 
     return;
-
 }
 
 #endif /* UART_INTERFACE_H_ */

@@ -1,16 +1,18 @@
 #include "usr_main.hpp"
+
 #include "uart_interface.hpp"
 
 /* global variables */
-UartInterface *uart_console;
-void cb(uint16_t* data, size_t size, uint32_t status){
+UartInterface* uart_console;
+void           cb(uint16_t* data, size_t size, uint32_t status)
+{
     (void)(data);
     (void)(size);
     (void)(status);
 }
 
-
-int usr_main(void){
+int usr_main(void)
+{
     /* 外部クロックとSWDを有効化するため、GIPOを有効化 */
     __HAL_RCC_GPIOD_CLK_ENABLE();
     __HAL_RCC_GPIOA_CLK_ENABLE();

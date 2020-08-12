@@ -17,4 +17,4 @@ $ ./build.sh
 ```
 
 # License
-"stm32-base-project" is under [MIT license](https://opensource.org/licenses/MIT).
+"motor-driver" is under [MIT license](https://opensource.org/licenses/MIT).

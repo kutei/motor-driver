@@ -14,8 +14,8 @@
  *
  *****************************************************************************/
 #include "main.h"
-#include "usr_main.hpp"
 
+#include "usr_main.hpp"
 #include <memory.h>
 
 static void SystemClock_Config(void);

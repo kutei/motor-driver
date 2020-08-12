@@ -10,19 +10,6 @@
 
 #include "stm32f1xx.h"
 
-class TestClass {
-public:
-    int init(USART_TypeDef* instance, uint32_t baud, uint32_t priority,
-            uint32_t byte_length, uint32_t stop_bits, uint32_t parity, uint8_t remap_gpio);
-    int init(USART_TypeDef* instance, uint32_t baud, uint32_t priority, uint8_t remap_gpio);
-private:
-    int _baud;
-    uint32_t _remap;
-    uint32_t _nvic_priority;
-    IRQn_Type _usart_irq;
-    UART_HandleTypeDef _huart;
-};
-
 class UartInterface {
 public:
     typedef void (*uart_callback_t)(uint16_t*, size_t, uint32_t);
@@ -34,9 +21,9 @@ public:
      * @param[in] baud ボーレート
      * @param[in] priority 割り込みのプライオリティ
      * @param[in] remap_gpio remap設定
-     * @retval 0 成功
+     * @retval None
      */
-    int init(USART_TypeDef* instance, uint32_t baud, uint32_t priority, uint8_t remap_gpio);
+    void init(USART_TypeDef* instance, uint32_t baud, uint32_t priority, uint8_t remap_gpio);
 
     /**
      * @brief uartペリフェラルを通信用として通信用として初期化起動する。
@@ -48,9 +35,9 @@ public:
      * @param[in] stop_bits stopビット長
      * @param[in] parity parityビットの設定
      * @param[in] remap_gpio remap設定
-     * @retval 0 成功
+     * @retval None
      */
-    int init(USART_TypeDef* instance, uint32_t baud, uint32_t priority,
+    void init(USART_TypeDef* instance, uint32_t baud, uint32_t priority,
             uint32_t byte_length, uint32_t stop_bits, uint32_t parity, uint8_t remap_gpio);
 
     /**

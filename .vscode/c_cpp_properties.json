@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "intelliSenseMode": "gcc-x64",
+            "includePath": [
+                "${workspaceFolder}/core/include",
+                "${workspaceFolder}/drivers/STM32F1xx_HAL_Driver/include",
+                "${workspaceFolder}/drivers/STM32F1xx_HAL_Driver/include/Legacy",
+                "${workspaceFolder}/drivers/CMSIS/Device/ST/STM32F1xx/include",
+                "${workspaceFolder}/drivers/CMSIS/include"
+            ],
+            "defines": [
+                "STM32F103xB"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

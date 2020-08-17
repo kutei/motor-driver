@@ -13,7 +13,8 @@
 class UartInterface
 {
 public:
-    typedef void (*uart_callback_t)(uint16_t *, size_t, uint32_t);
+    static constexpr int TIMEOUT_TRANSMIT = 10;
+    typedef void (*uart_callback_t)(uint16_t, size_t, uint32_t);
 
     /**
      * @brief uartペリフェラルを通信用として通信用として初期化起動する。(8bit,no-parity,1stop)
@@ -44,7 +45,7 @@ public:
     /**
      * @brief GPIOの設定を行い、割り込みを有効化して、通信を開始する。
      *
-     * @param[in] cb_function データを受信した際のcallback関数
+     * @param[in] cb_function データを受信した際のコールバック関数。コールバックを使用しない場合はnullptrを指定する。
      * @retval None
      */
     void start(uart_callback_t cb_function);
@@ -73,12 +74,21 @@ public:
     /**
      * @brief データを送信
      *
+     * @param[in] data 送信するデータ
+     * @param[in] timeout 送信のtimeout時間
+     * @retval None
+     */
+    void transmit(uint8_t data);
+
+    /**
+     * @brief データを送信
+     *
      * @param[in] data 送信するデータの先頭ポインタ
      * @param[in] size 送信するデータのデータ長
      * @param[in] timeout 送信のtimeout時間
      * @retval None
      */
-    void transmit(uint8_t *data, uint16_t size, uint32_t timeout);
+    void transmit(uint8_t *data, uint16_t size);
 
     /**
      * @brief 文字列データを送信
@@ -97,6 +107,16 @@ public:
      */
     void printf(const char *format, ...);
 
+    /**
+     * @brief 文字列データを受信（コールバックが有効の場合は使用できない）
+     *
+     * @param[in] data 送信する文字列
+     * @retval 0 受信できるデータが存在し、引数dataに値が設定された。
+     * @retval 1以上 受信できるデータが存在し、引数dataに値が設定されたが、受信時にエラーが発生した。
+     * @retval -1 受信できるデータが存在しない。
+     */
+    int receive(uint8_t *data);
+
 private:
     UART_HandleTypeDef huart;
     IRQn_Type          usart_irq;
@@ -109,10 +129,10 @@ private:
      * @note 各種レジスタの値を参照し、USART_DRからデータ取得可能なことを確認してから呼び出すこと。
      * @retval None
      */
-    uint16_t receive(void);
+    uint16_t get_dr(void);
 };
 
-inline uint16_t UartInterface::receive(void)
+inline uint16_t UartInterface::get_dr(void)
 {
     uint16_t formated_data = 0;
 
@@ -144,8 +164,8 @@ inline void UartInterface::handle_irq(void)
 
     /* UART received data is enabled */
     if (((isrflags & USART_SR_RXNE) != RESET) && ((cr1its & USART_CR1_RXNEIE) != RESET)) {
-        uint16_t rx_data = receive();
-        cb(&rx_data, 1, errorflags);
+        uint16_t rx_data = get_dr();
+        if (cb != nullptr) cb(rx_data, 1, errorflags);
     }
 
     return;

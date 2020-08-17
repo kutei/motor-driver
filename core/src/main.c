@@ -30,6 +30,10 @@ int main(void)
     HAL_Init();
     SystemClock_Config();
 
+    /* 外部クロックとSWDを有効化するため、GIPOを有効化 */
+    __HAL_RCC_GPIOD_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+
     /* ユーザ処理を開始 */
     usr_main();
 }

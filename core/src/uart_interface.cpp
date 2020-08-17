@@ -117,14 +117,14 @@ void UartInterface::disable_it(void)
     __HAL_UART_DISABLE_IT(&huart, UART_IT_ERR);   // disable the UART Error Interrupt: (Frame error, noise error, overrun error)
 }
 
-void UartInterface::transmit(uint8_t *pData, uint16_t Size, uint32_t Timeout) { HAL_UART_Transmit(&huart, pData, Size, Timeout); }
+void UartInterface::transmit(uint8_t data) { HAL_UART_Transmit(&huart, &data, 1, TIMEOUT_TRANSMIT); }
+void UartInterface::transmit(uint8_t *data, uint16_t size) { HAL_UART_Transmit(&huart, data, size, TIMEOUT_TRANSMIT); }
 
-void UartInterface::transmit(const char *pData)
+void UartInterface::transmit(const char *data)
 {
     uint8_t cnt = 0;
-    for (; *(pData + cnt); cnt++)
-        ;
-    transmit((uint8_t *)pData, cnt, 10);
+    for (; *(data + cnt); cnt++) { ; }
+    transmit((uint8_t *)data, cnt);
 }
 
 void UartInterface::printf(const char *format, ...)
@@ -135,6 +135,22 @@ void UartInterface::printf(const char *format, ...)
     va_list list;
     va_start(list, format);
     cnt = vsprintf(buf, format, list);
-    transmit((uint8_t *)buf, cnt, 10);
+    transmit((uint8_t *)buf, cnt);
     va_end(list);
+}
+
+int UartInterface::receive(uint8_t *data)
+{
+    uint32_t isrflags   = READ_REG(huart.Instance->SR);
+    uint32_t errorflags = (isrflags & (uint32_t)(USART_SR_PE | USART_SR_FE | USART_SR_ORE | USART_SR_NE));
+
+    if ((isrflags & USART_SR_RXNE) == RESET)
+    {
+        return -1;
+    }
+    else
+    {
+        *data = (uint8_t)get_dr();
+        return errorflags;
+    }
 }

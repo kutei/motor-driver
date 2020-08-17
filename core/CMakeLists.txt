@@ -1,6 +1,8 @@
 set(SRCS_CORE
     src/sys.c
     src/uart_interface.cpp
+    src/queued_uart.cpp
+    src/console_manager.cpp
     src/stm32f1xx_hal_msp.c
     src/system_stm32f1xx.c
     src/main.c

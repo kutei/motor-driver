@@ -13,8 +13,9 @@
  *                        opensource.org/licenses/BSD-3-Clause
  *
  *****************************************************************************/
-#include "main.hpp"
+#include "main.h"
 
+#include "usr_main.hpp"
 #include <memory.h>
 
 static void SystemClock_Config(void);
@@ -28,23 +29,13 @@ int main(void)
     /* HALを初期化して、クロックを設定 */
     HAL_Init();
     SystemClock_Config();
+
     /* 外部クロックとSWDを有効化するため、GIPOを有効化 */
     __HAL_RCC_GPIOD_CLK_ENABLE();
     __HAL_RCC_GPIOA_CLK_ENABLE();
 
-    /* Lチカ用初期化 */
-    __HAL_RCC_GPIOC_CLK_ENABLE();
-    GPIO_InitTypeDef GPIO_InitStruct;
-    GPIO_InitStruct.Pin   = GPIO_PIN_13;
-    GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull  = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-    while (1) {
-        GPIOC->ODR ^= 1 << 13;
-        HAL_Delay(500);
-    }
+    /* ユーザ処理を開始 */
+    usr_main();
 }
 
 /**

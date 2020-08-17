@@ -12,6 +12,7 @@ set(SRCS_HAL
     STM32F1xx_HAL_Driver/src/stm32f1xx_hal_flash.c
     STM32F1xx_HAL_Driver/src/stm32f1xx_hal_flash_ex.c
     STM32F1xx_HAL_Driver/src/stm32f1xx_hal_exti.c
+    STM32F1xx_HAL_Driver/src/stm32f1xx_hal_uart.c
 )
 
 add_library(hal ${SRCS_HAL})

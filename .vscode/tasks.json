@@ -6,26 +6,21 @@
         {
             "label": "Build project",
             "type": "shell",
-            "command": "make",
-            "args": [
-                "DEBUG=1",
-                "-j",
-                "all"
-            ],
+            "command": "./build.sh",
             "problemMatcher": [
                 "$gcc"
             ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
+            "group": "build"
         },
         {
             "type": "shell",
             "label": "Flash program",
-            "command": "openocd -f ./openocd.cfg -f \"interface/stlink-v2.cfg\" -f \"target/stm32f1x.cfg\" -c \"flash_elf build/prjoutput.elf\"",
+            "command": "./build.sh && openocd -f ./openocd.cfg -c \"flash_elf install/bin/prjoutput.elf\"",
             "problemMatcher": [],
-            "group": "none",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ]
 }
